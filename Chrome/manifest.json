@@ -44,6 +44,7 @@
 		"https://reddit.com/*",
 		"http://*.reddit.com/*",
 		"https://*.reddit.com/*",
+		"http://*.redditstatic.com/*",
 		"http://redditgifts.com/*",
 		"http://api.twitter.com/*",
 		"http://api.imgur.com/*",
