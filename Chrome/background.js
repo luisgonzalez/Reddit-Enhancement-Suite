@@ -90,6 +90,13 @@ XHRCache = {
 chrome.extension.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		switch(request.requestType) {
+			case 'deleteCookie':
+				// Get chrome cookie handler
+				if (!chrome.cookies) {
+                    chrome.cookies = chrome.experimental.cookies;
+                }
+				chrome.cookies.remove({'url': 'http://reddit.com', 'name': request.cname});
+				break;
 			case 'GM_xmlhttpRequest':
 				if (request.aggressiveCache || XHRCache.forceCache) {
 					var cachedResult = XHRCache.check(request.url);
@@ -102,8 +109,6 @@ chrome.extension.onMessage.addListener(
 				xhr.open(request.method, request.url, true);
 				if (request.method == "POST") {
 					xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					// xhr.setRequestHeader("Content-length", request.data.length);
-					// xhr.setRequestHeader("Connection", "close");					
 				}
 				xhr.onreadystatechange = function(a) {
 					if (xhr.readyState == 4) {
@@ -115,7 +120,7 @@ chrome.extension.onMessage.addListener(
 							XHRCache.add(request.url, response);
 						}
 					}
-				}
+				};
 				xhr.send(request.data);
 				return true;
 				break;
@@ -145,7 +150,6 @@ chrome.extension.onMessage.addListener(
 				thisLinkURL = request.linkURL;
 				if (thisLinkURL.toLowerCase().substring(0,4) != 'http') {
 					(thisLinkURL.substring(0,1) == '/') ? thisLinkURL = 'http://www.reddit.com' + thisLinkURL : thisLinkURL = location.href + thisLinkURL;
-					
 				}
 				// Get the selected tab so we can get the index of it.  This allows us to open our new tab as the "next" tab.
 				var newIndex = sender.tab.index+1;
@@ -153,12 +157,11 @@ chrome.extension.onMessage.addListener(
 				sendResponse({status: "success"});
 				break;
 			case 'openLinkInNewTab':
-				var focus = (request.focus == true);
+				var focus = (request.focus === true);
 				// handle requests from keyboardNav module
 				thisLinkURL = request.linkURL;
 				if (thisLinkURL.toLowerCase().substring(0,4) != 'http') {
 					(thisLinkURL.substring(0,1) == '/') ? thisLinkURL = 'http://www.reddit.com' + thisLinkURL : thisLinkURL = location.href + thisLinkURL;
-					
 				}
 				// Get the selected tab so we can get the index of it.  This allows us to open our new tab as the "next" tab.
 				var newIndex = sender.tab.index+1;
@@ -169,12 +172,12 @@ chrome.extension.onMessage.addListener(
 				var xhr = new XMLHttpRequest();
 				xhr.open("GET", request.url, true);
 				xhr.onreadystatechange = function() {
-				  if (xhr.readyState == 4) {
-					// JSON.parse does not evaluate the attacker's scripts.
-					var resp = JSON.parse(xhr.responseText);
-					sendResponse(resp);
-				  }
-				}
+					if (xhr.readyState == 4) {
+						// JSON.parse does not evaluate the attacker's scripts.
+						var resp = JSON.parse(xhr.responseText);
+						sendResponse(resp);
+					}
+				};
 				xhr.send();
 				return true;
 				break;
@@ -182,12 +185,12 @@ chrome.extension.onMessage.addListener(
 				var xhr = new XMLHttpRequest();
 				xhr.open("GET", request.url, true);
 				xhr.onreadystatechange = function() {
-				  if (xhr.readyState == 4) {
-					// JSON.parse does not evaluate the attacker's scripts.
-					var resp = JSON.parse(xhr.responseText);
-					sendResponse(resp);
-				  }
-				}
+					if (xhr.readyState == 4) {
+						// JSON.parse does not evaluate the attacker's scripts.
+						var resp = JSON.parse(xhr.responseText);
+						sendResponse(resp);
+					}
+				};
 				xhr.send();
 				return true;
 				break;
@@ -217,7 +220,7 @@ chrome.extension.onMessage.addListener(
 						chrome.tabs.query({}, function(tabs){
 							for (var i = 0; i < tabs.length; i++) {
 								if (thisTabID != tabs[i].id) {
-									chrome.tabs.sendMessage(tabs[i].id, { requestType: "localStorage", itemName: request.itemName, itemValue: request.itemValue });                         
+									chrome.tabs.sendMessage(tabs[i].id, { requestType: "localStorage", itemName: request.itemName, itemValue: request.itemValue });
 								}
 							}
 						});

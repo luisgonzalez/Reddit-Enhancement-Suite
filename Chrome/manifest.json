@@ -1,6 +1,6 @@
 {
 	"name": "Reddit Enhancement Suite",
-	"version": "4.1.5",
+	"version": "4.2.0.2",
 	"manifest_version": 2,
 	"minimum_chrome_version": "20.0",
 	"description": "Reddit Enhancement Suite - a group of enhancements for browsing Reddit",
@@ -19,14 +19,19 @@
 				"https://*.reddit.com/*"
 			],
 			"js": [
-				"jquery-1.6.4.min.js",
+				"jquery-1.9.1.min.js",
 				"guiders-1.2.8.js",
 				"jquery.dragsort-0.4.3.min.js",
 				"jquery-fieldselection.min.js",
-				"tinycon.min.js",
+				"tinycon.js",
 				"jquery.tokeninput.js",
 				"snuownd.js",
 				"reddit_enhancement_suite.user.js"
+			],
+			"css": [
+				"nightmode.css",
+				"commentBoxes.css",
+				"res.css"
 			],
 			"run_at": "document_start"
 		}
@@ -36,6 +41,7 @@
 		"128": "icon128.png" 
 	},
 	"permissions": [
+	    "cookies",
 		"tabs",
 		"history",
 		"http://redditenhancementsuite.com/",
