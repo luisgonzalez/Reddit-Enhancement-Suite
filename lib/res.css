@@ -22,6 +22,7 @@
 	-ms-transition:top 0.5s ease-in-out;
 	-transition:top 0.5s ease-in-out;
 }
+#RESConsole em { font-style: italic; }
 #RESConsole .handle { cursor: move; }
 #RESConsole.slideIn {
 	visibility: visible;
@@ -109,7 +110,7 @@
 #RESPrefsDropdown {
 	display: none;
 	position: absolute;
-	z-index: 10000;
+	z-index: 100000006;
 }
 .RESDropdownList {
 	list-style-type: none;
@@ -503,7 +504,8 @@ p.moduleListing {
 	width: 650px;
 	margin-top: 20px;
 }
-.optionContainer label {
+.optionContainer > label {
+	/* Only target row labels, not labels for specific inputs */
 	float: left;
 	width: 175px;
 }
@@ -520,6 +522,11 @@ p.moduleListing {
 .optionContainer .optionsTable input[type=text], .optionContainer .optionsTable input[type=password] {
 	margin-left: 0;
 }
+.optionContainer .RESConsoleButton {
+	float: left;
+	position: relative;
+	top: -6px;
+}
 .optionsTable th, .optionsTable td {
 	padding-bottom: 7px;
 }
@@ -528,6 +535,9 @@ p.moduleListing {
 }
 .optionDescription {
 	margin-left: 255px;
+}
+#fetchWalletAddress + .optionDescription {
+	margin-left: 355px;
 }
 .optionDescription.textInput {
 	margin-left: 340px;
@@ -709,11 +719,12 @@ p.moduleListing {
 }
 .RESNotificationHeader {
 	padding-left: 10px;
-	padding-right: 10px;
+	padding-right: 50px;
 	background-color: #f0f3fc;
 	border-bottom: #c7c7c7;
 	height: 38px;
 }
+.RESNotificationHeader .gearIcon { float: right; }
 .RESNotificationHeader h3 {
 	padding-top: 12px;
 	font-size: 15px;
@@ -792,7 +803,7 @@ a.RESNotificationButtonBlue {
 	background-color: #DDD;
 }
 /* Stuff added to force specificty */
-span.RESCharCounter[title] {
+span.RESCharCounter {
 	color: gray;
 	float: right;
 	font-size: 15px;
@@ -800,7 +811,7 @@ span.RESCharCounter[title] {
 	margin-bottom: -2px;
 }
 
-span.RESCharCounter[title].tooLong {
+span.RESCharCounter.tooLong {
 	color: red;
 }
 
@@ -816,6 +827,7 @@ body.RESScrollLock {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	background-color: rgba(0,0,0,.75);
 }
 .BELeft, .BERight {
 	position: absolute !important;
@@ -892,7 +904,7 @@ div + #BigText {
 	box-sizing: border-box;
 }
 
-.bottom-area .RESBigEditorPop {
+.content .RESBigEditorPop {
 	float: right;
 	margin: 3px 0 0 12px;
 	color: #333;
@@ -903,13 +915,138 @@ div + #BigText {
 	padding: 5px 3px;
 	background-repeat: no-repeat;
 	background-position: 4px 50%;
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/ppVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ1dWlkOjY1RTYzOTA2ODZDRjExREJBNkUyRDg4N0NFQUNCNDA3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjRGQkU3MTYwRkVBMjExRTFCNkYwODQ2MzkzQkU0QzU4IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjRGQkU3MTVGRkVBMjExRTFCNkYwODQ2MzkzQkU0QzU4IiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIElsbHVzdHJhdG9yIENTNiAoTWFjaW50b3NoKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAxODAxMTc0MDcyMDY4MTE4MDgzRUZFRDQ2NDFEODMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAyODAxMTc0MDcyMDY4MTE4MDgzRTdGNDQzQTE0MUI2Ii8+IDxkYzp0aXRsZT4gPHJkZjpBbHQ+IDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCI+Z2x5cGhpY29uc19oYWxmbGluZ3M8L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnRpdGxlPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsexWb8AAACvSURBVHjalFGBDcIgEHxYwAG0naFuwCbtBjIKbgCbsIHO0LhAJ8B788SHGpNecsA9z8M9ZhjOhb5I6/palKZxvERMc9WWWgTao4n1BzIqTqo6r3N/IIFXcANPoH7SIrFNchKVUj6ElwkMVat44L2qDQ9HYOkgrDYI7rrEMd0Ig/dFaV0Wg3f8ha/JmG5i2oHeyqc8VDeiuiCq7nHO3HtwqP6sQtbun2n/w2cTewswAPjfRfYSqgHwAAAAAElFTkSuQmCC)
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/ppVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ1dWlkOjY1RTYzOTA2ODZDRjExREJBNkUyRDg4N0NFQUNCNDA3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjRGQkU3MTYwRkVBMjExRTFCNkYwODQ2MzkzQkU0QzU4IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjRGQkU3MTVGRkVBMjExRTFCNkYwODQ2MzkzQkU0QzU4IiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIElsbHVzdHJhdG9yIENTNiAoTWFjaW50b3NoKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAxODAxMTc0MDcyMDY4MTE4MDgzRUZFRDQ2NDFEODMyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAyODAxMTc0MDcyMDY4MTE4MDgzRTdGNDQzQTE0MUI2Ii8+IDxkYzp0aXRsZT4gPHJkZjpBbHQ+IDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCI+Z2x5cGhpY29uc19oYWxmbGluZ3M8L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnRpdGxlPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsexWb8AAACvSURBVHjalFGBDcIgEHxYwAG0naFuwCbtBjIKbgCbsIHO0LhAJ8B788SHGpNecsA9z8M9ZhjOhb5I6/palKZxvERMc9WWWgTao4n1BzIqTqo6r3N/IIFXcANPoH7SIrFNchKVUj6ElwkMVat44L2qDQ9HYOkgrDYI7rrEMd0Ig/dFaV0Wg3f8ha/JmG5i2oHeyqc8VDeiuiCq7nHO3HtwqP6sQtbun2n/w2cTewswAPjfRfYSqgHwAAAAAElFTkSuQmCC);
 }
 button.RESBigEditorPop:hover {
 	background-color: #ddd; 
 }
-
+.wiki-page .RESBigEditorPop {
+	margin: 6px 20px 0 0;
+}
 #autocomplete_dropdown {
 	display: inline-block;
 	z-index: 3000;
+}
+
+
+
+/* Image Viewer */
+.commentarea .thing .usertext-body .expando-button, .listing-page .thing .expando-button {
+	padding: 0;
+}
+.usertext-body .md .expando-button {
+	float: none;
+	display: inline-block;
+	vertical-align: bottom;
+	margin-left: 4px;
+}
+.expando-button.image {
+	vertical-align: top !important;
+	float: left;
+	width: 23px;
+	height: 23px;
+	max-width: 23px;
+	max-height: 23px;
+	display: inline-block;
+	background-image: url('http://e.thumbs.redditmedia.com/r22WT2K4sio9Bvev.png');
+	margin-right: 6px;
+	cursor: pointer; 
+	padding: 0;
+}
+.expando-button.image.commentImg {
+	float: none;
+	margin-left: 4px;
+}
+.expando-button.image.collapsedExpando {
+	padding: 0;
+	background-position: 0 0; 
+}
+.expando-button.image.collapsedExpando:hover {background-position: 0 -24px; }
+.expando-button.image.expanded {background-position: 0 -48px; }
+.expando-button.image.expanded:hover {background-position: 0 -72px; }
+.expando-button.image.gallery.collapsedExpando {background-position: 0 -368px; }
+.expando-button.image.gallery.collapsedExpando:hover {background-position: 0 -392px; }
+.expando-button.image.gallery.expanded {background-position: 0 -416px; }
+.expando-button.image.gallery.expanded:hover {background-position: 0 -440px; }
+
+.madeVisible { clear: left; display: block; overflow: hidden; }
+.madeVisible a { display: inline-block; overflow: hidden; }
+.RESImage { display: block !important;  }
+.RESImage.loaded { position: absolute;  }
+.RESImagePlaceholder { float: left; display: block !important; }
+.RESdupeimg { color: #000; font-size: 10px;  }
+.RESClear { clear: both; margin-bottom: 10px;  }
+
+.RESGalleryControls a { cursor: pointer; display: inline-block; background-image: url("http://e.thumbs.redditmedia.com/r22WT2K4sio9Bvev.png"); width: 16px; height: 16px; margin: 5px; }
+.RESGalleryControls span { position: relative; top: -9px; }
+.RESGalleryControls .previous { background-position: 0 -352px; }
+.RESGalleryControls .next { background-position: 16px -352px; }
+.RESGalleryControls .next,.RESGalleryControls .previous {
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+.RESGalleryControls .end { background-position-y: -336px; }
+.RESGalleryControls .previous:hover { background-position: 0 -320px; }
+.RESGalleryControls .next:hover { background-position: 16px -320px; }
+.RESGalleryControls .end:hover { background-position-y: -304px; }
+
+.imgTitle {
+	font-size: 13px;
+	padding: 2px;
+}
+.imgCredits {
+	font-size: 11px;
+	padding: 2px;
+}
+.thing .title.visited { color: #551A8B; }
+.RESImage.RESImageError {content: "";}
+.RESImage.RESImageError:after {
+	content:"Loading of image " attr(src) " failed. Click to view directly";
+}
+.usertext iframe {
+	border: none;
+}
+
+/* modules['showParent'] - show parent hover */
+.RESHoverHighlight { background-color: lightblue; }
+.res-parents-down .RESHoverHighlight { cursor: se-resize; }
+.res-parents-up .RESHoverHighlight { cursor: ne-resize; }
+#parentCommentContainer {
+	border: 1px solid #666;
+	background-color:#fff;
+	padding: 4px;
+	width: auto;
+	position: absolute;
+	z-index: 99999;
+}
+.res-parents-up #parentCommentContainer { bottom: 0px; }
+#parentCommentWrapper {
+	position: absolute;
+	left: 10px;
+	right: 10px;
+}
+.parentArrow {
+	text-align: center;
+	margin-top: -5px;
+	margin-bottom: 5px;
+}
+.res-parents-down .parentArrow::before, .res-parents-down .parentArrow::after {
+	padding: 1ex;
+	content: "↓";
+}
+.res-parents-up .parentArrow::before, .res-parents-up .parentArrow::after {
+	padding: 1ex;
+	content: "↑";
+}
+a.bylink.parentlink {
+	float: right; 
+}
+
+/* Handle multireddit bar on savedComments page */
+.with-listing-chooser #savedLinksList {
+	margin-left: 120px;
+}
+.listing-chooser-collapsed #savedLinksList {
+	margin-left: 8px;
 }

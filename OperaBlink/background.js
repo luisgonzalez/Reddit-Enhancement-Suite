@@ -125,7 +125,7 @@ chrome.extension.onMessage.addListener(
 				return true;
 				break;
 			case 'singleClick':
-				var button = (request.button !== 1) && (request.ctrl !== 1);
+				var button = (request.button !== 1) || (request.ctrl !== 1);
 				// Get the selected tab so we can get the index of it.  This allows us to open our new tab as the "next" tab.
 				var newIndex = sender.tab.index + 1;
 				// handle requests from singleClick module

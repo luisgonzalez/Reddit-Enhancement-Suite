@@ -1,4 +1,6 @@
-For general documentation, see the RES Wiki (http://redditenhancementsuite.com:8080/wiki/index.php?title=Main\_Page), at least until the new documentation is finished.
+EXISTING RES CONTRIBUTORS: Please read the "afterwords..." part of [this comment](https://github.com/honestbleeps/Reddit-Enhancement-Suite/pull/451#issuecomment-23672706) and perform the necessary steps to get your repo back to normal.
+
+For general documentation, see the RES Wiki (http://redditenhancementsuite.com:8080/wiki/), at least until the new documentation is finished.
 
 ### FIRST, a note ###
 
