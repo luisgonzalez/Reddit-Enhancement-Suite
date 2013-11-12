@@ -1,8 +1,8 @@
 {
 	"name": "Reddit Enhancement Suite",
-	"version": "4.3.0",
+	"version": "4.3.1",
 	"manifest_version": 2,
-	"minimum_chrome_version": "20.0",
+	"minimum_chrome_version": "26.0",
 	"description": "Reddit Enhancement Suite - a group of enhancements for browsing Reddit",
 	"background": {
 		"scripts": ["background.js"]
@@ -60,5 +60,8 @@
 		"http://api.tumblr.com/v2/blog/*/posts?api_key=*&id=*",
 		"https://mediacru.sh/*",
 		"http://noembed.com/embed?url=*"
+	],
+	"optional_permissions": [
+		"https://api.twitter.com/*"
 	]
 }
