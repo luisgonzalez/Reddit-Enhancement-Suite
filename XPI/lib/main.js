@@ -1,46 +1,100 @@
+/* jshint esnext: true */
+/* global require: false */
+
 // Import the APIs we need.
-var pageMod = require("page-mod");
-var Request = require('request').Request;
-var self = require("self");
-var firefox = typeof require;
-var tabs = require("tabs");
-var ss = require("simple-storage");
-var priv = require("private-browsing");
-var windows = require("sdk/windows").browserWindows;
+let pageMod = require("sdk/page-mod");
+let Request = require("sdk/request").Request;
+let self = require("sdk/self");
+let tabs = require("sdk/tabs");
+//let ss = require("simple-storage"); // Temporarily disabled
+let timer = require("sdk/timers");
+let priv = require("sdk/private-browsing");
+let windows = require("sdk/windows").browserWindows;
 
 // require chrome allows us to use XPCOM objects...
-const {Cc,Ci,Cu} = require("chrome");
-var historyService = Cc["@mozilla.org/browser/history;1"].getService(Ci.mozIAsyncHistory);
+const {Cc,Ci,Cu,components} = require("chrome");
+let historyService = Cc["@mozilla.org/browser/history;1"].getService(Ci.mozIAsyncHistory);
+
+// Temporary workaround for ss being broken (https://github.com/honestbleeps/Reddit-Enhancement-Suite/issues/797)
+let localStorage = {};
+let file = require("sdk/io/file")
+let ss = (function() {
+	var timeout = null;
+	var filename = (function() {
+		let storeFile = Cc["@mozilla.org/file/directory_service;1"].
+			getService(Ci.nsIProperties).
+			get("ProfD", Ci.nsIFile);
+		storeFile.append("jetpack");
+		storeFile.append(self.id);
+		storeFile.append("simple-storage");
+		file.mkpath(storeFile.path);
+		storeFile.append("store.json");
+		return storeFile.path;
+	})();
+	var really_save = function() {
+		let stream = file.open(filename, "w");
+		try {
+			stream.writeAsync(JSON.stringify(localStorage), function writeAsync(err) {
+				if (err)
+					console.error("Error writing simple storage file: " + filename);
+			}.bind(this));
+		}
+		catch (err) {
+			// writeAsync closes the stream after it's done, so only close on error.
+			stream.close();
+		}
+	};
+	this.save = function() {
+	    if (timeout !== null) {
+			timer.clearTimeout(timeout);
+	    }
+	    timeout = timer.setTimeout(really_save, 3000);
+	};
+	let str = "";
+	try {
+		str = file.read(filename);
+	} catch (e) {
+		console.warn("Error loading simple storage file: " + e);
+	}
+	localStorage = str ? JSON.parse(str) : {};
+	return this;
+})();
+// End temporary workaround
+
 // Cookie manager for new API login
-var cookieManager = Cc["@mozilla.org/cookiemanager;1"].getService().QueryInterface(Ci.nsICookieManager2);
+let cookieManager = Cc["@mozilla.org/cookiemanager;1"].getService().QueryInterface(Ci.nsICookieManager2);
+components.utils.import("resource://gre/modules/NetUtil.jsm");
+
+// Preferences
+let prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
 
 // this function takes in a string (and optional charset, paseURI) and creates an nsURI object, which is required by historyService.addURI...
 function makeURI(aURL, aOriginCharset, aBaseURI) {
-	var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+	let ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 	return ioService.newURI(aURL, aOriginCharset, aBaseURI);
 }
 
-var workers = [];
+let workers = [];
 function detachWorker(worker, workerArray) {
-	var index = workerArray.indexOf(worker);
+	let index = workerArray.indexOf(worker);
 	if (index !== -1) {
 		workerArray.splice(index, 1);
 	}
 }
 
-var localStorage = ss.storage;
-
 localStorage.getItem = function(key) {
-	return ss.storage[key];
+	return localStorage[key];
 };
 localStorage.setItem = function(key, value) {
-	ss.storage[key] = value;
+	localStorage[key] = value;
+	ss.save();
 };
 localStorage.removeItem = function(key) {
-	delete ss.storage[key];
+	delete localStorage[key];
+	ss.save();
 };
 
-XHRCache = {
+let XHRCache = {
 	forceCache: false,
 	capacity: 250,
 	entries: {},
@@ -60,7 +114,7 @@ XHRCache = {
 			return;
 		} else {
 //			console.log("add");
-			this.entries[key] = {data: value, timestamp: new Date(), hits: 1};
+			this.entries[key] = {data: value, timestamp: Date.now(), hits: 1};
 			this.count++;
 		}
 		if (this.count > this.capacity) {
@@ -68,9 +122,9 @@ XHRCache = {
 		}
 	},
 	prune: function() {
-		var now = new Date();
-		var bottom = [];
-		for (var key in this.entries) {
+		let now = Date.now();
+		let bottom = [];
+		for (let key in this.entries) {
 //			if (this.entries[key].hits === 1) {
 //				delete this.entries[key];
 //				this.count--;
@@ -84,8 +138,8 @@ XHRCache = {
 			});
 		}
 		bottom.sort(function(a,b){return a.weight-b.weight;});
-		var count = this.count - Math.floor(this.capacity / 2);
-		for (var i = 0; i < count; i++) {
+		let count = this.count - Math.floor(this.capacity / 2);
+		for (let i = 0; i < count; i++) {
 			delete this.entries[bottom[i].key];
 			this.count--;
 		}
@@ -98,7 +152,7 @@ XHRCache = {
 };
 tabs.on('activate', function(tab) {
 	// find this worker...
-	for (var i in workers) {
+	for (let i in workers) {
 		if ((typeof workers[i].tab !== 'undefined') && (tab.title === workers[i].tab.title)) {
 			workers[i].postMessage({ name: "getLocalStorage", message: localStorage });
 		}
@@ -110,19 +164,70 @@ pageMod.PageMod({
 	include: ["*.reddit.com"],
 	contentScriptWhen: 'start',
 	contentScriptFile: [
-		self.data.url('jquery-1.9.1.min.js'),
+		self.data.url('jquery-1.10.2.min.js'),
 		self.data.url('guiders-1.2.8.js'),
 		self.data.url('jquery.dragsort-0.6.js'),
 		self.data.url('jquery-fieldselection.min.js'),
 		self.data.url('tinycon.js'),
 		self.data.url('jquery.tokeninput.js'),
+		self.data.url('HTMLPasteurizer.js'),
 		self.data.url('snuownd.js'),
-		self.data.url('reddit_enhancement_suite.user.js')
+		self.data.url('utils.js'),
+		self.data.url('browsersupport.js'),
+		self.data.url('console.js'),
+		self.data.url('alert.js'),
+		self.data.url('storage.js'),
+		self.data.url('template.js'),
+		self.data.url('konami.js'),
+		self.data.url('mediacrush.js'),
+		self.data.url('gfycat.js'),
+		self.data.url('hogan-2.0.0.js'),
+		self.data.url('reddit_enhancement_suite.user.js'),
+		self.data.url('modules/betteReddit.js'),
+		self.data.url('modules/userTagger.js'),
+		self.data.url('modules/keyboardNav.js'),
+		self.data.url('modules/commandLine.js'),
+		self.data.url('modules/about.js'),
+		self.data.url('modules/hover.js'),
+		self.data.url('modules/subredditTagger.js'),
+		self.data.url('modules/uppersAndDowners.js'),
+		self.data.url('modules/singleClick.js'),
+		self.data.url('modules/commentPreview.js'),
+		self.data.url('modules/commentTools.js'),
+		self.data.url('modules/sortCommentsTemporarily.js'),
+		self.data.url('modules/usernameHider.js'),
+		self.data.url('modules/showImages.js'),
+		self.data.url('modules/showKarma.js'),
+		self.data.url('modules/hideChildComments.js'),
+		self.data.url('modules/showParent.js'),
+		self.data.url('modules/neverEndingReddit.js'),
+		self.data.url('modules/saveComments.js'),
+		self.data.url('modules/userHighlight.js'),
+		self.data.url('modules/styleTweaks.js'),
+		self.data.url('modules/accountSwitcher.js'),
+		self.data.url('modules/filteReddit.js'),
+		self.data.url('modules/newCommentCount.js'),
+		self.data.url('modules/spamButton.js'),
+		self.data.url('modules/commentNavigator.js'),
+		self.data.url('modules/subredditManager.js'),
+		self.data.url('modules/RESTips.js'),
+		self.data.url('modules/settingsNavigation.js'),
+		self.data.url('modules/dashboard.js'),
+		self.data.url('modules/notifications.js'),
+		self.data.url('modules/subredditInfo.js'),
+		self.data.url('modules/commentHidePersistor.js'),
+		self.data.url('modules/bitcointip.js'),
+		self.data.url('modules/troubleshooter.js'),
+		self.data.url('init.js')
 	],
 	contentStyleFile: [
 		self.data.url('nightmode.css'),
 		self.data.url('commentBoxes.css'),
-		self.data.url('res.css')
+		self.data.url('res.css'),
+		self.data.url('players.css'),
+		self.data.url('guiders.css'),
+		self.data.url('tokenize.css'),
+		self.data.url("batch.css")
 	],
 	onAttach: function(worker) {
 		// when a tab is activated, repopulate localStorage so that changes propagate across tabs...
@@ -131,18 +236,25 @@ pageMod.PageMod({
 			detachWorker(this, workers);
 		});
 		worker.on('message', function(data) {
-			var request = data;
+			let request = data,
+				inBackground = prefs.getBoolPref('browser.tabs.loadInBackground') || true,
+				isPrivate, thisLinkURL;
+
 			switch (request.requestType) {
+				case 'readResource':
+					let fileData = self.data.load(request.filename);
+					worker.postMessage({ name: 'readResource', data: fileData, transaction: request.transaction });
+					break;
 				case 'deleteCookie':
 					cookieManager.remove('.reddit.com', request.cname, '/', false);
 					break;
 				case 'GM_xmlhttpRequest':
-					var responseObj = {
+					let responseObj = {
 						XHRID: request.XHRID,
 						name: request.requestType
 					};
 					if (request.aggressiveCache || XHRCache.forceCache) {
-						var cachedResult = XHRCache.check(request.url);
+						let cachedResult = XHRCache.check(request.url);
 						if (cachedResult) {
 							responseObj.response = cachedResult;
 							worker.postMessage(responseObj);
@@ -186,28 +298,27 @@ pageMod.PageMod({
 
 					break;
 				case 'singleClick':
-					var button = ((request.button === 1) || (request.ctrl === 1));
-					var isPrivate = priv.isPrivate(windows.activeWindow);
+					inBackground = ((request.button === 1) || (request.ctrl === 1));
+					isPrivate = priv.isPrivate(windows.activeWindow);
 
 					// handle requests from singleClick module
 					if (request.openOrder === 'commentsfirst') {
 						// only open a second tab if the link is different...
 						if (request.linkURL !== request.commentsURL) {
-							tabs.open({url: request.commentsURL, inBackground: button, isPrivate: isPrivate });
+							tabs.open({url: request.commentsURL, inBackground: inBackground, isPrivate: isPrivate });
 						}
-						tabs.open({url: request.linkURL, inBackground: button, isPrivate: isPrivate });
+						tabs.open({url: request.linkURL, inBackground: inBackground, isPrivate: isPrivate });
 					} else {
-						tabs.open({url: request.linkURL, inBackground: button, isPrivate: isPrivate });
+						tabs.open({url: request.linkURL, inBackground: inBackground, isPrivate: isPrivate });
 						// only open a second tab if the link is different...
 						if (request.linkURL !== request.commentsURL) {
-							tabs.open({url: request.commentsURL, inBackground: button, isPrivate: isPrivate });
+							tabs.open({url: request.commentsURL, inBackground: inBackground, isPrivate: isPrivate });
 						}
 					}
 					worker.postMessage({status: "success"});
 					break;
 				case 'keyboardNav':
-					var button = (request.button === 1);
-					var isPrivate = priv.isPrivate(windows.activeWindow);
+					isPrivate = priv.isPrivate(windows.activeWindow);
 
 					// handle requests from keyboardNav module
 					thisLinkURL = request.linkURL;
@@ -215,26 +326,27 @@ pageMod.PageMod({
 						thisLinkURL = (thisLinkURL.substring(0, 1) === '/') ? 'http://www.reddit.com' + thisLinkURL : location.href + thisLinkURL;
 					}
 					// Get the selected tab so we can get the index of it.  This allows us to open our new tab as the "next" tab.
-					tabs.open({url: thisLinkURL, inBackground: button, isPrivate: isPrivate });
+					tabs.open({url: thisLinkURL, inBackground: inBackground, isPrivate: isPrivate });
 					worker.postMessage({status: "success"});
 					break;
 				case 'openLinkInNewTab':
-					var focus = (request.focus === true);
-					var isPrivate = priv.isPrivate(windows.activeWindow);
+					inBackground = (request.focus !== true);
+					isPrivate = priv.isPrivate(windows.activeWindow);
+
 					thisLinkURL = request.linkURL;
 					if (thisLinkURL.toLowerCase().substring(0, 4) !== 'http') {
 						thisLinkURL = (thisLinkURL.substring(0, 1) === '/') ? 'http://www.reddit.com' + thisLinkURL : location.href + thisLinkURL;
 					}
 					// Get the selected tab so we can get the index of it.  This allows us to open our new tab as the "next" tab.
-					tabs.open({url: thisLinkURL, inBackground: !focus, isPrivate: isPrivate });
+					tabs.open({url: thisLinkURL, inBackground: inBackground, isPrivate: isPrivate });
 					worker.postMessage({status: "success"});
 					break;
 				case 'loadTweet':
 					Request({
 						url: request.url,
 						onComplete: function(response) {
-							var resp = JSON.parse(response.text);
-							var responseObj = {
+							let resp = JSON.parse(response.text);
+							let responseObj = {
 								name: 'loadTweet',
 								response: resp
 							};
@@ -248,7 +360,7 @@ pageMod.PageMod({
 					worker.postMessage({ name: 'getLocalStorage', message: localStorage });
 					break;
 				case 'saveLocalStorage':
-					for (var key in request.data) {
+					for (let key in request.data) {
 						localStorage.setItem(key,request.data[key]);
 					}
 					localStorage.setItem('importedFromForeground', true);
@@ -276,12 +388,12 @@ pageMod.PageMod({
 					}
 					break;
 				case 'addURLToHistory':
-					var isPrivate = priv.isPrivate(windows.activeWindow);
+					isPrivate = priv.isPrivate(windows.activeWindow);
 					if (isPrivate) {
 						// do not add to history if in private browsing mode!
 						return false;
 					}
-					var uri = makeURI(request.url);
+					let uri = makeURI(request.url);
 					historyService.updatePlaces({
 						uri: uri,
 						visits: [{
