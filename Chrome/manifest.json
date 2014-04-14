@@ -73,6 +73,7 @@
 				"modules/commentHidePersistor.js",
 				"modules/bitcointip.js",
 				"modules/troubleshooter.js",
+				"modules/localDate.js",
 				"modules/commentHistoryEnhanced.js",
 				"init.js"
 			],
