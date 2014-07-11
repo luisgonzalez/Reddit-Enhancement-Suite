@@ -6,7 +6,7 @@
 permissionQueue = {
 	count: 0,
 	onloads: []
-}
+};
 
 
 chrome.runtime.onMessage.addListener(
@@ -38,6 +38,10 @@ chrome.runtime.onMessage.addListener(
 				} else {
 					permissionQueue.onloads[request.callbackID](true);
 				}
+				break;
+			case 'subredditStyle':
+				var toggle = !modules['styleTweaks'].styleToggleCheckbox.checked;
+				modules['styleTweaks'].toggleSubredditStyle(toggle, RESUtils.currentSubreddit());
 				break;
 			default:
 				// sendResponse({status: "unrecognized request type"});
@@ -139,7 +143,7 @@ BrowserStrategy.storageSetup = function(thisJSON) {
 			setUpRESStorage(response);
 		}
 	});
-}
+};
 
 
 BrowserStrategy.sendMessage = function(thisJSON) {
@@ -172,7 +176,7 @@ BrowserStrategy.addURLToHistory = (function() {
 		}
 
 		original(url);
-	}
+	};
 })();
 
 BrowserStrategy.supportsThirdPartyCookies = function() {
@@ -181,4 +185,4 @@ BrowserStrategy.supportsThirdPartyCookies = function() {
 	}
 
 	return true;
-}
+};
