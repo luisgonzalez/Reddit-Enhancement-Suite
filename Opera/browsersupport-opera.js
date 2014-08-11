@@ -1,10 +1,9 @@
-
 // This is the message handler for Opera - the background page calls this function with return data...
 
 function operaMessageHandler(msgEvent) {
 	var eventData = msgEvent.data;
 	switch (eventData.msgType) {
-		case 'GM_xmlhttpRequest':
+		case 'ajax':
 			// Fire the appropriate onload function for this xmlhttprequest.
 			xhrQueue.onloads[eventData.XHRID](eventData.data);
 			break;
@@ -77,61 +76,58 @@ function operaMessageHandler(msgEvent) {
 	}
 }
 
-if (typeof GM_xmlhttpRequest === 'undefined') {
-	if (BrowserDetect.isOpera()) {
-		GM_xmlhttpRequest = function(obj) {
-			obj.requestType = 'GM_xmlhttpRequest';
-			// Turns out, Opera works this way too, but I'll forgive them since their extensions are so young and they're awesome people...
 
-			// oy vey... cross domain same issue with Opera.
-			var crossDomain = (obj.url.indexOf(location.hostname) === -1);
+BrowserStrategy.ajax = function(obj) {
+	obj.requestType = 'ajax';
+	// Turns out, Opera works this way too, but I'll forgive them since their extensions are so young and they're awesome people...
 
-			if ((typeof obj.onload !== 'undefined') && (crossDomain)) {
-				obj.XHRID = xhrQueue.count;
-				xhrQueue.onloads[xhrQueue.count] = obj.onload;
-				opera.extension.postMessage(JSON.stringify(obj));
-				xhrQueue.count++;
-			} else {
-				var request = new XMLHttpRequest();
-				request.onreadystatechange = function() {
-					if (obj.onreadystatechange) {
-						obj.onreadystatechange(request);
-					}
-					if (request.readyState === 4 && obj.onload) {
-						obj.onload(request);
-					}
-				};
-				request.onerror = function() {
-					if (obj.onerror) {
-						obj.onerror(request);
-					}
-				};
-				try {
-					request.open(obj.method, obj.url, true);
-				} catch (e) {
-					if (obj.onerror) {
-						obj.onerror({
-							readyState: 4,
-							responseHeaders: '',
-							responseText: '',
-							responseXML: '',
-							status: 403,
-							statusText: 'Forbidden'
-						});
-					}
-					return;
-				}
-				if (obj.headers) {
-					for (var name in obj.headers) {
-						request.setRequestHeader(name, obj.headers[name]);
-					}
-				}
-				request.send(obj.data);
-				return request;
+	// oy vey... cross domain same issue with Opera.
+	var crossDomain = (obj.url.indexOf(location.hostname) === -1);
+
+	if ((typeof obj.onload !== 'undefined') && (crossDomain)) {
+		obj.XHRID = xhrQueue.count;
+		xhrQueue.onloads[xhrQueue.count] = obj.onload;
+		opera.extension.postMessage(JSON.stringify(obj));
+		xhrQueue.count++;
+	} else {
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if (obj.onreadystatechange) {
+				obj.onreadystatechange(request);
+			}
+			if (request.readyState === 4 && obj.onload) {
+				obj.onload(request);
 			}
 		};
+		request.onerror = function() {
+			if (obj.onerror) {
+				obj.onerror(request);
+			}
+		};
+		try {
+			request.open(obj.method, obj.url, true);
+		} catch (e) {
+			if (obj.onerror) {
+				obj.onerror({
+					readyState: 4,
+					responseHeaders: '',
+					responseText: '',
+					responseXML: '',
+					status: 403,
+					statusText: 'Forbidden'
+				});
+			}
+			return;
+		}
+		if (obj.headers) {
+			for (var name in obj.headers) {
+				request.setRequestHeader(name, obj.headers[name]);
+			}
+		}
+		request.send(obj.data);
+		return request;
 	}
-}
+};
 
 
 function operaUpdateCallback(obj) {
@@ -179,7 +175,7 @@ BrowserStrategy.RESInitReadyCheck = function(RESInit) {
 		};
 
 		// include CSS files, then load scripts.
-		var cssFiles = ['res.css', 'guiders.css', 'tokenize.css', 'commentBoxes.css', 'nightmode.css','players.css','batch.css'];
+		var cssFiles = ['core/res.css', 'vendor/guiders.css', 'vendor/tokenize.css', 'modules/commentBoxes.css', 'modules/nightmode.css', 'vendor/players.css', 'core/batch.css'];
 		for (var i in cssFiles) {
 			loadCSS(cssFiles[i]);
 		}
@@ -476,7 +472,7 @@ BrowserStrategy.RESInitReadyCheck = function(RESInit) {
 		// save Reddit's jQuery, because this script is going to jack it up.
 		// now, take the new jQuery in and store it local to RES's scope (it's a var up top)
 		var redditJq = window.$;
-		require(['jquery-1.11.1.min', 'guiders-1.2.8', 'tinycon', 'snuownd', 'jquery.dragsort-0.6', 'jquery.tokeninput', 'jquery-fieldselection.min'], function() {
+		require(['jquery-1.11.1.min', 'guiders-1.2.8', 'favico', 'snuownd', 'jquery.dragsort-0.6', 'jquery.tokeninput', 'jquery-fieldselection.min'], function() {
 			RESInit();
 		});
 	} else {

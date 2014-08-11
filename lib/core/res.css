@@ -287,23 +287,22 @@ body.res-console-open {
 .RESDialogSmall > h3 {
 	color: #000;
 	font-size: 14px;
-	margin-top: 6px;
-	margin-bottom: 10px;
+	margin: 0 0 10px;
 	font-weight: normal;
-	position: absolute;
-	top: -5px;
-	left: 0;
-	right: 0;
 	background-color: #f0f3fc;
 	border-bottom: 1px solid #c7c7c7;
 	width: auto;
+	position: relative;
 	z-index: 10;
 	height: 28px;
 	padding-left: 10px;
 	padding-top: 12px;
 }
-.RESDialogSmall .RESDialogContents, .usertext-edit .RESDialogSmall .md.RESDialogContents {
-	padding: 56px 12px 12px 12px;
+.RESDialogSmall .RESDialogContents {
+	padding: 0 12px 12px 12px;
+}
+#BigEditor .BELeft .RESDialogContents {
+	padding-top: 52px;
 }
 .usertext-edit .RESDialogSmall .md.RESDialogContents {
 	border: none;
@@ -748,9 +747,6 @@ p.moduleListing {
 	display: none;
 }
 #SearchRES-results-container + #SearchRES-boilerplate { margin-top: 1em; border-top: 1px black solid; padding-top: 1em; }
-#SearchRES-results-container h4 {
-	margin-top: 1.5em;
-}
 #SearchRES-results-container li {
 	list-style-type: none;
 	border-bottom: 1px dashed #ccc;
@@ -1002,6 +998,12 @@ body.RESScrollLock {
 	bottom: 0;
 	background-color: rgba(0,0,0,.75);
 }
+#BigEditor .markdownEditor-wrapper {
+	display: none; /* unused */
+}
+#BigEditor .RESDialogContents .markdownEditor-wrapper {
+	display: block;
+}
 .BELeft, .BERight {
 	position: absolute !important;
 	top: 0;
@@ -1031,10 +1033,9 @@ body.RESScrollLock {
 	margin: 1em .5em;
 }
 .BELeft .RESDialogContents {
-	padding-bottom: 7.5em;
 	left: 0;
 	right: 0;
-	margin: 0em 1em 0em 1em;
+	margin: 0 1em 0 1em;
 }
 .BERight .RESDialogContents, .BERight .RESDialogContents.wiki-page-content {
 	overflow: auto;
@@ -1046,20 +1047,14 @@ body.RESScrollLock {
 #BigText {
 	resize: none;
 	width: 100%;
-	height: 105%;
-}
-div + #BigText {
 	height: 100%;
 }
 
-.BELeft .markdownEditor {
-	max-height: 45px;
-}
-.BELeft .markdownEditor:hover {
-	max-height: none;
+.BEFoot {
+	margin-top: 0.5em;
 }
 .BEFoot button {
-	margin-top: 0.5em;
+	display: inline-block;
 }
 .BEFoot .errorList {
 	margin-left: 1em;
@@ -1364,6 +1359,86 @@ a.bylink.parentlink {
 #show_stylesheets:target + label {
 	background-color: lightblue;
 }
+
+
+/*
+(cs)spinner.css - http://jh3y.github.io/-cs-spinner
+Licensed under the MIT license
+
+Jhey Tompkins (c) 2014.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+/* (cs)spinner base styling */
+.csspinner {
+  position: relative;
+}
+.csspinner:before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #999999;
+  opacity: 0.6;
+}
+.csspinner:after {
+  z-index: 2;
+  content: "";
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -20px 0 0 -20px;
+  -webkit-transition: all .75s ease 0s;
+  transition: all .75s ease 0s;
+  border-radius: 100%;
+  border-top: 4px solid #555555;
+  -webkit-animation: standard .75s infinite linear;
+  animation: standard .75s infinite linear;
+  -webkit-transform-origin: center;
+  -ms-transform-origin: center;
+  transform-origin: center;
+}
+/* (cs)spinner ringed spinner.
+a spinner with a static ring and no overlay.*/
+.csspinner.ringed:after {
+  border-right: 4px solid #8BBDD6;
+  border-top: 4px solid #0052D6;
+  border-left: 4px solid #8BBDD6;
+  border-bottom: 4px solid #8BBDD6;
+  opacity: 1;
+}
+/* (cs)spinner standard rotation animation used for duo, double-up etc. */
+@-webkit-keyframes standard {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes standard {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+
 /* Compiled SCSS from MediaCrush - https://github.com/MediaCrush/MediaCrush */
 .player {
   position: relative; }

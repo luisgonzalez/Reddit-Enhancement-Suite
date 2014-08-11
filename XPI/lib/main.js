@@ -1,13 +1,16 @@
 /* jshint esnext: true */
 /* global require: false */
 
+// suppress annoying strict warnings that cfx overrides and turns on
+// comment this line out for releases.
+// require("sdk/preferences/service").set("javascript.options.strict", false);
+
 // Import the APIs we need.
 let pageMod = require("sdk/page-mod");
 let Request = require("sdk/request").Request;
 let self = require("sdk/self");
 let tabs = require("sdk/tabs");
 let ss = require("sdk/simple-storage");
-let timer = require("sdk/timers");
 let priv = require("sdk/private-browsing");
 let windows = require("sdk/windows").browserWindows;
 
@@ -119,26 +122,26 @@ pageMod.PageMod({
 	include: ["*.reddit.com"],
 	contentScriptWhen: 'start',
 	contentScriptFile: [
-		self.data.url('jquery-1.11.1.min.js'),
-		self.data.url('guiders-1.2.8.js'),
-		self.data.url('jquery.dragsort-0.6.js'),
-		self.data.url('jquery-fieldselection.min.js'),
-		self.data.url('tinycon.js'),
-		self.data.url('jquery.tokeninput.js'),
-		self.data.url('HTMLPasteurizer.js'),
-		self.data.url('snuownd.js'),
-		self.data.url('utils.js'),
+		self.data.url('vendor/jquery-1.11.1.min.js'),
+		self.data.url('vendor/guiders-1.2.8.js'),
+		self.data.url('vendor/jquery.dragsort-0.6.js'),
+		self.data.url('vendor/jquery-fieldselection.min.js'),
+		self.data.url('vendor/favico.js'),
+		self.data.url('vendor/jquery.tokeninput.js'),
+		self.data.url('vendor/HTMLPasteurizer.js'),
+		self.data.url('vendor/snuownd.js'),
+		self.data.url('core/utils.js'),
 		self.data.url('browsersupport.js'),
 		self.data.url('browsersupport-firefox.js'),
-		self.data.url('console.js'),
-		self.data.url('alert.js'),
-		self.data.url('migrate.js'),
-		self.data.url('storage.js'),
-		self.data.url('template.js'),
-		self.data.url('konami.js'),
-		self.data.url('mediacrush.js'),
-		self.data.url('gfycat.js'),
-		self.data.url('hogan-2.0.0.js'),
+		self.data.url('core/console.js'),
+		self.data.url('core/alert.js'),
+		self.data.url('core/migrate.js'),
+		self.data.url('core/storage.js'),
+		self.data.url('core/template.js'),
+		self.data.url('vendor/konami.js'),
+		self.data.url('vendor/mediacrush.js'),
+		self.data.url('vendor/gfycat.js'),
+		self.data.url('vendor/hogan-2.0.0.js'),
 		self.data.url('reddit_enhancement_suite.user.js'),
 		self.data.url('modules/betteReddit.js'),
 		self.data.url('modules/userTagger.js'),
@@ -182,16 +185,16 @@ pageMod.PageMod({
 		self.data.url('modules/searchHelper.js'),
 		self.data.url('modules/logoLink.js'),
 		self.data.url('modules/voteEnhancements.js'),
-		self.data.url('init.js')
+		self.data.url('core/init.js')
 	],
 	contentStyleFile: [
-		self.data.url('nightmode.css'),
-		self.data.url('commentBoxes.css'),
-		self.data.url('res.css'),
-		self.data.url('players.css'),
-		self.data.url('guiders.css'),
-		self.data.url('tokenize.css'),
-		self.data.url("batch.css")
+		self.data.url('modules/nightmode.css'),
+		self.data.url('modules/commentBoxes.css'),
+		self.data.url('core/res.css'),
+		self.data.url('vendor/players.css'),
+		self.data.url('vendor/guiders.css'),
+		self.data.url('vendor/tokenize.css'),
+		self.data.url("core/batch.css")
 	],
 	onAttach: function(worker) {
 		// when a tab is activated, repopulate localStorage so that changes propagate across tabs...
@@ -212,7 +215,7 @@ pageMod.PageMod({
 				case 'deleteCookie':
 					cookieManager.remove('.reddit.com', request.cname, '/', false);
 					break;
-				case 'GM_xmlhttpRequest':
+				case 'ajax':
 					let responseObj = {
 						XHRID: request.XHRID,
 						name: request.requestType
