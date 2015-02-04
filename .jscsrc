@@ -1,0 +1,6 @@
+{
+	"preset": "jquery",
+	"requireDotNotation": false,
+	"validateQuoteMarks": "'",
+	"excludeFiles": ["lib/vendor"]
+}

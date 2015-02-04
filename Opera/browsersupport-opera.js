@@ -124,6 +124,11 @@ BrowserStrategy.ajax = function(obj) {
 				request.setRequestHeader(name, obj.headers[name]);
 			}
 		}
+
+		if (obj.isLogin) {
+			request.withCredentials = true;
+		}
+
 		request.send(obj.data);
 		return request;
 	}
@@ -145,11 +150,11 @@ BrowserStrategy.storageSetup = function(thisJSON) {
 		var fr = new FileReader();
 		fr.onload = function() {
 			callback(fr.result);
-		}
+		};
 		fr.readAsText(f);
 	};
 
-	opera.extension.addEventListener("message", operaMessageHandler, false);
+	opera.extension.addEventListener('message', operaMessageHandler, false);
 	// We're already loaded, call the handler immediately
 	opera.extension.postMessage(JSON.stringify(thisJSON));
 };
@@ -166,7 +171,7 @@ BrowserStrategy.RESInitReadyCheck = function(RESInit) {
 				var fr = new FileReader();
 				fr.onload = function() {
 					// Load the library
-					var styleTag = document.createElement("style");
+					var styleTag = document.createElement('style');
 					styleTag.textContent = fr.result;
 					document.body.appendChild(styleTag);
 				};
@@ -254,7 +259,7 @@ BrowserStrategy.RESInitReadyCheck = function(RESInit) {
 
 					// result => path
 					require(result, function(store) {
-						var data = [].slice.call(arguments, 1); // get rid off "store" from arguments
+						var data = Array.prototype.slice.call(arguments, 1); // get rid off "store" from arguments
 						var item = store.pop();
 						item.cb(cb.apply(global, data));
 					}.bind(global, define._store));
@@ -472,7 +477,7 @@ BrowserStrategy.RESInitReadyCheck = function(RESInit) {
 		// save Reddit's jQuery, because this script is going to jack it up.
 		// now, take the new jQuery in and store it local to RES's scope (it's a var up top)
 		var redditJq = window.$;
-		require(['jquery-1.11.1.min', 'guiders-1.2.8', 'favico', 'snuownd', 'jquery.dragsort-0.6', 'jquery.tokeninput', 'jquery-fieldselection.min'], function() {
+		require(['jquery-1.11.2.min', 'guiders', 'favico', 'snuownd', 'jquery.sortable-0.9.12', 'jquery.edgescroll-0.1', 'jquery.tokeninput', 'jquery-fieldselection.min'], function() {
 			RESInit();
 		});
 	} else {
@@ -506,5 +511,3 @@ BrowserStrategy.openLinkInNewTab = function (thisHREF) {
 };
 
 BrowserStrategy.addURLToHistory = BrowserStrategy._addURLToHistory;
-
-BrowserStrategy.supportsThirdPartyCookies = function() { return false; };
