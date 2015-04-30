@@ -117,15 +117,15 @@ tabs.on('activate', function() {
 	// find this worker...
 	let worker = getActiveWorker();
 	if (worker) {
-		worker.postMessage({ name: 'getLocalStorage', message: localStorage });
-		worker.postMessage({ name: 'subredditStyle', message: 'refreshState' });
+		worker.postMessage({ requestType: 'getLocalStorage', message: localStorage });
+		worker.postMessage({ requestType: 'subredditStyle', message: 'refreshState' });
 	}
 });
 
 function getActiveWorker() {
 	let tab = tabs.activeTab;
 	for (let i in workers) {
-		if ((typeof workers[i].tab !== 'undefined') && (tab.title === workers[i].tab.title)) {
+		if (workers[i] && workers[i].tab && (tab.title === workers[i].tab.title)) {
 			return workers[i];
 		}
 	}
@@ -158,13 +158,13 @@ pageMod.PageMod({
 		self.data.url('core/utils.js'),
 		self.data.url('browsersupport.js'),
 		self.data.url('browsersupport-firefox.js'),
-		self.data.url('core/console.js'),
+		self.data.url('core/options.js'),
 		self.data.url('core/alert.js'),
 		self.data.url('core/migrate.js'),
 		self.data.url('core/storage.js'),
 		self.data.url('core/template.js'),
 		self.data.url('vendor/konami.js'),
-		self.data.url('vendor/mediacrush.js'),
+		self.data.url('vendor/imgrush.js'),
 		self.data.url('vendor/gfycat.js'),
 		self.data.url('vendor/gifyoutube.js'),
 		self.data.url('vendor/imgurgifv.js'),
@@ -175,6 +175,18 @@ pageMod.PageMod({
 		self.data.url('modules/userTagger.js'),
 		self.data.url('modules/keyboardNav.js'),
 		self.data.url('modules/commandLine.js'),
+		self.data.url('modules/easterEgg.js'),
+		self.data.url('modules/pageNavigator.js'),
+		self.data.url('modules/userInfo.js'),
+		self.data.url('modules/presets.js'),
+		self.data.url('modules/onboarding.js'),
+		self.data.url('modules/customToggles.js'),
+		self.data.url('modules/floater.js'),
+		self.data.url('modules/orangered.js'),
+		self.data.url('modules/announcements.js'),
+		self.data.url('modules/selectedEntry.js'),
+		self.data.url('modules/settingsConsole.js'),
+		self.data.url('modules/menu.js'),
 		self.data.url('modules/about.js'),
 		self.data.url('modules/hover.js'),
 		self.data.url('modules/subredditTagger.js'),
@@ -193,6 +205,7 @@ pageMod.PageMod({
 		self.data.url('modules/userHighlight.js'),
 		self.data.url('modules/nightMode.js'),
 		self.data.url('modules/styleTweaks.js'),
+		self.data.url('modules/stylesheet.js'),
 		self.data.url('modules/userbarHider.js'),
 		self.data.url('modules/accountSwitcher.js'),
 		self.data.url('modules/filteReddit.js'),
@@ -219,6 +232,8 @@ pageMod.PageMod({
 		self.data.url('modules/modhelper.js'),
 		self.data.url('modules/quickMessage.js'),
 		self.data.url('modules/hosts/imgur.js'),
+		self.data.url('modules/hosts/twitter.js'),
+		self.data.url('modules/hosts/futurism.js'),
 		self.data.url('modules/hosts/gfycat.js'),
 		self.data.url('modules/hosts/gifyoutube.js'),
 		self.data.url('modules/hosts/vidble.js'),
@@ -235,7 +250,7 @@ pageMod.PageMod({
 		self.data.url('modules/hosts/tumblr.js'),
 		self.data.url('modules/hosts/memecrunch.js'),
 		self.data.url('modules/hosts/imgflip.js'),
-		self.data.url('modules/hosts/mediacrush.js'),
+		self.data.url('modules/hosts/imgrush.js'),
 		self.data.url('modules/hosts/livememe.js'),
 		self.data.url('modules/hosts/makeameme.js'),
 		self.data.url('modules/hosts/memegen.js'),
@@ -250,6 +265,9 @@ pageMod.PageMod({
 		self.data.url('modules/hosts/giphy.js'),
 		self.data.url('modules/hosts/streamable.js'),
 		self.data.url('modules/hosts/raddit.js'),
+		self.data.url('modules/hosts/pastebin.js'),
+		self.data.url('modules/hosts/github.js'),
+		self.data.url('modules/hosts/onedrive.js'),
 		self.data.url('core/init.js')
 	],
 	contentStyleFile: [
@@ -275,7 +293,7 @@ pageMod.PageMod({
 			switch (request.requestType) {
 				case 'readResource':
 					let fileData = self.data.load(request.filename);
-					worker.postMessage({ name: 'readResource', data: fileData, transaction: request.transaction });
+					worker.postMessage({ requestType: 'readResource', data: fileData, transaction: request.transaction });
 					break;
 				case 'deleteCookie':
 					cookieManager.remove('.reddit.com', request.cname, '/', false);
@@ -284,7 +302,7 @@ pageMod.PageMod({
 				case 'ajax':
 					let responseObj = {
 						XHRID: request.XHRID,
-						name: request.requestType
+						requestType: request.requestType
 					};
 					if (request.aggressiveCache || XHRCache.forceCache) {
 						let cachedResult = XHRCache.check(request.url);
@@ -375,30 +393,15 @@ pageMod.PageMod({
 					openTab({url: thisLinkURL, inBackground: inBackground, isPrivate: isPrivate });
 					worker.postMessage({status: 'success'});
 					break;
-				case 'loadTweet':
-					Request({
-						url: request.url,
-						onComplete: function(response) {
-							let resp = JSON.parse(response.text);
-							let responseObj = {
-								name: 'loadTweet',
-								response: resp
-							};
-							worker.postMessage(responseObj);
-						},
-						headers: request.headers,
-						content: request.data
-					}).get();
-					break;
 				case 'getLocalStorage':
-					worker.postMessage({ name: 'getLocalStorage', message: localStorage });
+					worker.postMessage({ requestType: 'getLocalStorage', message: localStorage });
 					break;
 				case 'saveLocalStorage':
 					for (let key in request.data) {
 						localStorage.setItem(key,request.data[key]);
 					}
 					localStorage.setItem('importedFromForeground', true);
-					worker.postMessage({ name: 'saveLocalStorage', message: localStorage });
+					worker.postMessage({ requestType: 'saveLocalStorage', message: localStorage });
 					break;
 				case 'localStorage':
 					switch (request.operation) {
@@ -438,7 +441,7 @@ pageMod.PageMod({
 									onChange: function(state) {
 										let worker = getActiveWorker();
 										worker.postMessage({
-											name: 'subredditStyle',
+											requestType: 'subredditStyle',
 											toggle: state.checked
 										});
 									}
@@ -498,6 +501,17 @@ pageMod.PageMod({
 							visitDate: Date.now() * 1000
 						}]
 					});
+					break;
+				case 'multicast':
+					isPrivate = priv.isPrivate(worker)
+					workers
+						.filter(function(w) {
+							return (w !== worker) && (priv.isPrivate(w) === isPrivate);
+						})
+						.forEach(function(worker) {
+							worker.postMessage(request);
+						});
+
 					break;
 				default:
 					worker.postMessage({status: 'unrecognized request type'});

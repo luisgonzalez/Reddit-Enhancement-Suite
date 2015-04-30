@@ -32,6 +32,7 @@
 		<style type="text/css" id="submitWizardCSS">
 		#submittingToEnhancement { display: none; min-height: 300px; font-size: 14px; line-height: 15px; margin-top: 10px; width: 518px; position: absolute; z-index: 999; } #submittingToEnhancement ol { margin-left: 10px; margin-top: 15px; list-style-type: decimal; } #submittingToEnhancement li { margin-left: 25px; }
 		.submittingToEnhancementButton { border: 1px solid #444; border-radius: 2px; padding: 3px 6px; cursor: pointer; display: inline-block; margin-top: 12px; }
+		#RESSubmitAprilFools { background: #F87; color: black; margin-top: 2em;  padding: 1em;}
 		#RESBugReport, #RESFeatureRequest { display: none; }
 		#RESSubmitOptions .submittingToEnhancementButton { margin-top: 30px; }
 		</style>
@@ -42,6 +43,13 @@
 			<div class="RESDialogContents">
 				<div id="RESSubmitOptions">
 					What's on your mind?<br>
+
+					{{#foolin}}
+					<div id="RESSubmitAprilFools">
+						Enjoy April Fool's. RES can't turn off any of reddit's shenanigans. However, <a href="/r/Enhancement/wiki/faq/srstyle" target="_blank">you can turn off subreddit styles</a>.
+					</div>
+					{{/foolin}}
+
 					<div id="RESSubmitBug" class="submittingToEnhancementButton" title="Post a problem to /r/RESissues">
 						I'm having issues or found a bug
 					</div><br>
@@ -81,6 +89,78 @@
 		</div>
 
 		<!-- RESConsole -->
+		<div id="settingsConsole">
+			<div id="RESConsoleContainer">
+				<div id="RESConsoleHeader">
+					<div id="RESConsoleTopBar" class="RESDialogTopBar">
+						<img id="RESLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAeCAMAAABHRo19AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACxFBMVEXw8/wAAAD+//8EBAQSEhIPDw/w8/v+/v4JCQkHBwcCAgKSk5W8vLz9SADz8/MtLS0iIiIcHBz/VAAYGBmRkZFkZGUkJCQVFhZiYmOZmp2QkpfQ09r9/f3n6vA5OTkvLy//TAAxMTEUFRTl5eVqa2zu8fnt7/fV19ydnqCen6Lt8Pj/TwDk5ORaWlrg4ug1NTUpKSrX19cgICDp6/J6enrFxcW1trpDQ0M7OzwnJyenp6f6TQAXFxj/WACFhojr6+uNjpBHR0cfHx+vr7GSkpJMTEwYGBg+Pj5cXF3CwsJISEj29vYQEBDe3t7+SwBmZmixsbH19fXo6OhQUFAgICJgYWXHyM3q7PTs7vW3uLvb3eKqq650dXbS09js7/aTlJY5OjmUlJeenp7r7vWWl5n8/Px4eHihoqWEhYfO0NTj5euDg4Pa3OGRkpTJy8/g4ODe4Obc3Nzv8vqjo6O1tbW3uLyrq6t1dXX5ya5/f3/5xqxZWVqKiopra2v4uJb99vLCw8fFxsouLS6Oj5Hs7OzY2t+jpKZ4eXv2tY8NDQ35WQny8vJkZGT2lWGQkJB8fHzi5OrLzNFAQUPm6O/3f0W7u7v3oXP4dTb2nXH62MX3pHb87+bn5+dWV1dvb3E0NDT4lWP3jFP4vJn2cS79+vaJioxNTU376d72f0H4Wwf2fT7759z9+fX1lmH4XAv2bSb40bheX2A6Ojr9+vj76t/9+vf76+H5XxVGRkZxcnPQ0te+vr52dnaztLfExMT2tZFYWFhSUlLV1dVwcXL52MS4uLiysrKam5rW1tZPT1CVlZWYmJiUlJRHR0ipqq0qKiqzs7P39/fq6urj4+P89fH09PT6+vo4ODjq7PNsbW4oKCh0dHTv7++3t7fk5u2IiYtFRUU3NzdPT0/Kysru7u6NjY1tbW1gYGBfX19sbGyHh4fh4eEzPXfuAAACPElEQVR4Xq3SQ9fkQBTH4bpVSdru17Zt28bYtm3btm3btm37S8yk0oteTKc7c+a3uf/Nc3JyEvT/48KF69Uhu7dk3AfaZ48PRiHgUwLdpGLdtFbecrkPOxvjuSRcmp2vaIsQt6gdLME4UtlGGs6NFW7+GIw7Qidp2BAq3KaQWg650mwC9LSs6JpRfZG03PTo32reMrmzIW3IlGaSZY/W+aCcoY/xq1SCKXAC5xAaGObkFoSmZoK3uaxqlgzL6vol3UohjIpDLWq6J4jaaNZUnsb4syMCsHU5o10q4015sZAshp2LuuCu4DSZFzJrrh0GURj3Ai8BNHrQ08TdyvZXDsDzYBD+W4OJK5bFh9nGIaRuKKTTxw5fOtJTUCtWjh3H31NQiCdOso2DiVlXSsXGDN+M6XRdnlmtmUNXYrGaLPhD3IFvoQfQrH4KkMdRsjgiK2IZXcurs4zHVvFrdSasQTaeTFu7DtPWa4yaDXSd0xh9N22mMyUVieItWwW8bfuOnbvo2r1n7779mOZ6QByHHsRChw4fsXwsz6OPsdDxE0i0kyQA20rLFIhjzuW0TVxIgpB4Z+AsBRXn1RZTdeEivXFyFbLXJTaJvmkDNJgLrly95iR3juTt9eIbyH6ucJPq2hJGQQiru63lbbriDocc6C7cu1/BgwcPH9U/4cdT9TNQIcd6/oK8fFWbg4Vev0n0I6VvkcO9A38Fq495X5T3wZkhLvAROZ6KYT59Lvvy9VvU9x8/1fW/DEygHfEbNdeCkgdk4HMAAAAASUVORK5CYII=">
+						<h1>{{name}}</h1>
+						<div id="RESConsoleVersionDisplay">v{{version}}</div>
+
+						<a id="RESConsoleSubredditLink" href="/r/Enhancement" alt="The RES Subreddit">/r/Enhancement</a>
+						<span id="RESClose" class="RESCloseButton">×</span>
+
+						<label id="RESAllOptionsSpan">
+							<input id="RESAllOptions" type="checkbox">
+							<span>Show all options</span>
+						</label>
+					</div>
+				</div>
+
+				<div id="RESConsoleContent">
+					<div id="RESConfigPanelModulesPane">
+						<div id="SearchRES-input-container"></div>
+
+						<div id="RESConfigPanelModulesList"></div>
+					</div>
+					<div id="RESConfigPanelOptions">
+						<div class="moduleHeader">
+							<span class="moduleName">Module Name</span>
+							<div class="moduleToggle enabled" moduleID="moduleID">
+								<span class="toggleOn noCtrlF" data-text="on"></span>
+								<span class="toggleOff noCtrlF" data-text="off"></span>
+							</div>
+							<div id="moduleOptionsSaveStatus" class="saveStatus" style="display: none;">Options have been saved...</div>
+
+							<div class="moduleDescription"></div>
+						</div>
+						<div id="allOptionsContainer"></div>
+						<div id="noOptions" class="optionContainer">
+							There are no configurable options for this module.
+						</div>
+					</div>
+					<button id="moduleOptionsSave">save options</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="settingsConsoleSearch">
+			<form id="SearchRES-input-container">
+				<input id="SearchRES-input" type="text" placeholder="search RES settings" />
+				<button id="SearchRES-input-submit" type="submit">
+					<span class="res-icon">&#xF094;</span>
+				</button>
+			</form>
+		</div>
+
+		<div id="settingsConsoleModuleSelector">
+			<ul>
+			{{#categories}}
+				<li class="RESConfigPanelCategory" data-category="{{name}}">
+					<h3 class="categoryButton" data-category="{{name}}">{{name}}</h3>
+					<ul>
+					{{#modules}}
+						<li class="moduleButton {{#isEnabled}}enabled{{/isEnabled}}" data-module="{{moduleID}}">
+							{{moduleName}}
+						</li>
+					{{/modules}}
+					</ul>
+				</li>
+			{{/categories}}
+			</ul>
+		</div>
+
+
 		<div id="contributeRESPanel">
 			<div id="contributeContents">
 				<p>RES is entirely free - as in beer, as in open source, as in everything.  If you like our work, a contribution would be greatly appreciated.</p>
@@ -141,19 +221,19 @@
 		</div>
 		<div id="aboutRESPanel">
 			<h3>RES Team</h3>
-			<p><a target="_blank" href="http://www.honestbleeps.com/">Steve Sobel</a> (<a target="_blank" href="http://www.reddit.com/user/honestbleeps/">/u/honestbleeps</a>) is the primary developer of RES.  Beyond that, there are a number of people who have contributed code, design and/or great ideas to RES.  <a target="_blank" href="http://redditenhancementsuite.com/about.html">Read more about the RES team.</a></p>
+			<p><a target="_blank" href="http://www.honestbleeps.com/">Steve Sobel</a> (<a target="_blank" href="http://www.reddit.com/user/honestbleeps/">/u/honestbleeps</a>) is the primary developer of RES.  Beyond that, there are a number of people who have contributed code, design and/or great ideas to RES.  <a target="_blank" href="/r/Enhancement/w/about/team">Read more about the RES team.</a></p>
 
 			<h3>What is RES?</h3>
 			<p>Reddit Enhancement Suite is a collection of modules that makes browsing reddit a whole lot easier.</p>
 
-			<p>Read more about what RES can do for you on the <a href="http://www.reddit.com/r/Enhancement/wiki">/r/Enhancement wiki</a> or look over the <a href="http://www.reddit.com/r/Enhancement/faq">Frequently Asked Questions</a>.
+			<p>Read more about what RES can do for you on the <a href="http://www.reddit.com/r/Enhancement/wiki">/r/Enhancement wiki</a> or look over the <a href="http://www.reddit.com/r/Enhancement/faq">Frequently Asked Questions</a>.</p>
 
 			<h3>Want to talk?</h3>
 
 			<p>If something looks broken, <a href="http://www.reddit.com/r/RESissues/search?restrict_sr=on">search in /r/RESissues</a> or <a href="http://www.reddit.com/r/RESIssues/submit">post a bug report</a>.</p>
 
 
-			<p>If you have an idea or want to chat with other RES users, <a href="http://www.reddit.com/r/Enhancement/search?restrict_sr=on">search in /r/Enhancement</a> or <a href="http://www.reddit.com/r/Enhancement/submit">submit a feature request or discussion</a>.
+			<p>If you have an idea or want to chat with other RES users, <a href="http://www.reddit.com/r/Enhancement/search?restrict_sr=on">search in /r/Enhancement</a> or <a href="http://www.reddit.com/r/Enhancement/submit">submit a feature request or discussion</a>.</p>
 
 			<p>If you'd like to contribute code to RES, check out <a href="https://github.com/honestbleeps/Reddit-Enhancement-Suite" target="_blank">RES on GitHub</a>.</p>
 
@@ -175,7 +255,7 @@
 			<div id="SearchRES-boilerplate">
 				<p>You can search for RES options by module name, option name, and description. For example, try searching for "daily trick" in one of the following ways:</p>
 				<ul>
-					<li>type <code>daily trick</code> in the search box above and click the button</li>
+					<li>type <code>daily trick</code> in the search box to the left and click the magnifying glass button</li>
 					<li>press <code>.</code> to open the RES console, type in <code>search <em>daily trick</em></code>, and press Enter</li>
 				</ul>
 			</div>
@@ -193,6 +273,7 @@
 			#quickMessageDialog textarea { resize: vertical; min-height: 100px; }
 			#quickMessageDialog input[type=button] { cursor: pointer; position: absolute; right: 16px; bottom: 16px; padding: 3px 5px; font-size: 12px; color: #fff; border: 1px solid #636363; border-radius: 3px; background-color: #5cc410; }
 			#quickMessageDialog .clear { margin-bottom: 10px; }
+			#quickMessageDialog .moderator::after { width: 16px; height: 16px; margin-left: 5px; display: inline-block; vertical-align: top; content: ""; background: url(https://www.redditstatic.com/sprite-reddit.EMWQffWtZwo.png) no-repeat -44px -796px; }
 		</style>
 		<div id="quickMessage" type="application/x-template">
 			<div id="quickMessageDialog" class="RESDialogSmall">
@@ -409,6 +490,149 @@
 [RES settings console]({{settingsUrl}}) > {{category}} > [{{moduleName}}]({{moduleUrl}} "{{moduleID}}") {{#optionKey}} > [{{optionKey}}]({{optionUrl}}){{/optionKey}}
 
 {{description}}
-		</script>
+		</pre>
+
+		<div id="RESHoverDefault">
+			<div class="RESHover">
+				<div data-hover-element="0" />
+				<div data-hover-element="1" />
+				<div data-hover-element="2" />
+				<div data-hover-element="3" />
+			</div>
+		</div>
+
+		<div id="RESHoverInfoCard">
+			<div class="RESHover RESHoverInfoCard RESDialogSmall">
+				<h3 id="RESHoverTitle" data-hover-element="0"></h3>
+				<div class="RESCloseButton">x</div>
+				<div id="RESHoverBody" class="RESDialogContents" data-hover-element="1"></div>
+			</div>
+		</div>
+
+		<div id="RESHoverDropdownList">
+			<div class="RESHover RESHoverDropdownList RESDropdownList">
+				<ul class="RESDropdownOptions" data-hover-element="0"></ul>
+			</div>
+		</div>
+
+		<style id="RESHoverStyle" type="text/css">
+			.RESHover, .RESHover.RESDialogSmall { display: none; position: absolute; z-index: 10001; }
+
+			.RESHoverInfoCard:before { content: ""; position: absolute; top: 10px; left: -26px; border-style: solid; border-width: 10px 29px 10px 0; border-color: transparent #c7c7c7; display: block; width: 0; z-index: 1; }
+			.RESHoverInfoCard:after { content: ""; position: absolute; top: 10px; left: -24px; border-style: solid; border-width: 10px 29px 10px 0; border-color: transparent #f0f3fc; display: block; width: 0; z-index: 1; }
+			.RESHoverInfoCard.right:before { content: ""; position: absolute; top: 10px; right: -26px; left: auto; border-style: solid; border-width: 10px 0 10px 29px; border-color: transparent #c7c7c7; display: block; width: 0; z-index: 1; }
+			.RESHoverInfoCard.right:after { content: ""; position: absolute; top: 10px; right: -24px; left: auto; border-style: solid; border-width: 10px 0 10px 29px; border-color: transparent #f0f3fc; display: block; width: 0; z-index: 1; }
+			.RESHoverInfoCard.below:before, .RESHoverInfoCard.below:after { content: none; }
+		</style>
+
+
+		<style id="commentNavigatorCSS" type="text/css">
+			#REScommentNavBox { clear: both; margin-top: 10px; width: 265px; border: 1px solid gray; background-color: #fff; opacity: 0.3; user-select: none; -webkit-user-select: none; -moz-user-select: none; -webkit-transition:opacity 0.5s ease-in; -moz-transition:opacity 0.5s ease-in; -o-transition:opacity 0.5s ease-in; -ms-transition:opacity 0.5s ease-in; -transition:opacity 0.5s ease-in; }
+			#REScommentNavBox:hover { opacity: 1 }
+			#REScommentNavToggle { clear: left; }
+			.commentarea .menuarea { margin-right: 0; }
+			.menuarea > .spacer { margin-right: 0; }
+			#commentNavButtons { margin: auto; }
+			#commentNavUp, #commentNavDown { cursor: pointer; color: #1278D3; border: none; background: transparent; padding: 0; font-size: 35px; line-height: 0.9; }
+			#commentNavUp:focus, #commentNavDown:focus { outline: none; text-shadow: 0 0 5px #1278D3; }
+			#commentNavUp[disabled], #commentNavDown[disabled] { opacity: 0.3; cursor: default; }
+			#commentNavButtons { display: none; margin-left: 12px; text-align: center; user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+			.commentNavSortType { cursor: pointer; font-weight: bold; display: inline-block; }
+			#commentNavPostCount { color: #1278d3; }
+			.noNav #commentNavPostCount { color: #666; }
+			.commentNavSortTypeDisabled { color: #666; }
+			.commentNavSortType:hover { text-decoration: underline; }
+			.menuarea > .spacer { float: left; margin-bottom: 10px; }
+		</style>
+
+		<div id="commentNavigator">
+			<h3>
+				Navigate by:
+				<select id="commentNavBy">
+					<option name=""></option>
+					<option name="submitter">submitter</option>
+					<option name="moderator">moderator</option>
+					<option name="friend">friend</option>
+					<option name="me">me</option>
+					<option name="admin">admin</option>
+					<option name="highlighted">highlighted</option>
+					<option name="gilded">gilded</option>
+					<option name="IAmA">IAmA</option>
+					<option name="images">images</option>
+					<option name="videos">videos</option>
+					<option name="popular">popular</option>
+					<option name="new">new</option>
+				</select>
+			</h3>
+			<div id="commentNavCloseButton" class="RESCloseButton">&times;</div>
+			<div class="RESDialogContents">
+				<div id="commentNavButtons">
+					<button id="commentNavUp" type="button" disabled>&#x25B2;</button> <div id="commentNavPostCount"></div> <button id="commentNavDown" type="button" disabled>&#x25BC;</button>
+				</div>
+			</div>
+		</div>
+
+		<style id="pageNavigator-CSS" type="text/css">
+			.pageNavigator {
+				cursor: pointer;
+				padding: 3px 3px;
+				line-height: 1;
+				font-size: 16px;
+				font-weight: bold;
+				text-align: center;
+				color: #888;
+			}
+		</style>
+
+		<style type="text/css" id="floater-visibleAfterScroll-CSS">
+			.res-floater-visibleAfterScroll {
+				position: fixed;
+				top: {{ offset }}px;
+				right: 8px;
+				display: block;
+			}
+			.res-floater-visibleAfterScroll > ul {
+				float: right;
+				list-style: none;
+			}
+			.res-floater-visibleAfterScroll > ul > li {
+				display: block;
+				float: left;
+				opacity: 0.7;
+			}
+			.res-floater-visibleAfterScroll > ul > li:hover {
+				opacity: 1.0;
+			}
+		</style>
+
+		<style type="text/css" id="neverEndingReddit-CSS">
+			#NERModal { display: none; z-index: 999; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; opacity: 0.6; }
+			#NERContent { display: none; position: fixed; top: 40px; z-index: 1000; width: 720px; background-color: #FFF; color: #000; padding: 10px; font-size: 12px; }
+			#NERModalClose { position: absolute; top: 3px; right: 3px; }
+			#NERFail { min-height: 30px; width: 95%; font-size: 14px; border: 1px solid #999; border-radius: 10px; padding: 5px; text-align: center; bgcolor: #f0f3fc; cursor: auto; }
+			#NERFail .nextprev { font-size: smaller; display: block; }
+			#NERFail .nextprev a + a { margin-left: 2em; }
+			.NERdupe p.title:after { color: #000; font-size: 10px; content: ' (duplicate from previous page)'; }
+			.NERPageMarker { text-align: center; color: #7f7f7f; font-size: 14px; margin-top: 6px; margin-bottom: 6px; overflow: hidden; font-weight: normal; background-color: #f0f3fc; border: 1px solid #c7c7c7; border-radius: 3px; padding: 3px 0; }
+			/* hide next/prev page and random subreddit indicators */
+			.content div.nav-buttons { display: none; }
+			.content .nav-buttons .nextprev { display: none; }
+			.res-ner-fade-dupes .NERdupe { opacity: 0.3; }
+			.res-ner-hide-dupes .NERdupe { display: none; }
+			/* set the style for our little loader widget */
+			#progressIndicator {
+				height: 60px;
+				display: -webkit-flex; -webkit-align-items: center; -webkit-justify-content: center; -webkit-flex-direction: column;
+				display: flex; align-items: center; justify-content: center; flex-direction: column;
+				font-size: 14px; border: 1px solid #999; border-radius: 10px; padding: 10px; background-color: #f0f3fc; cursor: pointer;
+			}
+			#progressIndicator h2 { margin-bottom: .5em; }
+			#progressIndicator .gearIcon { margin-left: 1em; }
+			#progressIndicator .RESThrobber { margin-top: 10px; margin-bottom: 0; }
+			#NREPause { cursor: pointer; }
+			#NREPause::after { font-family: Batch; color: #888; display: block; width: 10px; height: 10px; padding: 0 2px 4px; margin: 2px; border: 1px solid #888; border-radius: 50%; }
+			#NREPause::after, #NREPause.paused.reversePause::after { content: "\F16C"; }
+			#NREPause.paused::after, #NREPause.reversePause::after { content: "\F16B"; }
+		</style>
 	</body>
 </html>
